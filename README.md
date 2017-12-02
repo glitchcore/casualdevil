@@ -1,1 +1,1 @@
-Run `npm install` and `npm run build`
+Run `npm install` and `npm run start`
