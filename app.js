@@ -25,7 +25,7 @@ function init() {
     // camera
     
     camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 15000 );
-    camera.position.set( 190, 0, 8 );
+    camera.position.set( 100, 0, 1 );
     // camera.lookAt(scene.position);
     // camera.position.x = 100;
     // camera.rotation.x = Math.PI / 4;

@@ -16,9 +16,9 @@ function make_player(scene, position) {
     box.position.z = LEGS_HEIGHT * 1.5;
 
     var support_box = new Physijs.BoxMesh(
-        new THREE.BoxGeometry(1, 1, 1),
+        new THREE.BoxGeometry(1, 1, LEGS_HEIGHT/2),
         new THREE.MeshLambertMaterial({color: 0xffffff, transparent: false, opacity: 0.0}),
-        0.1
+        100
     );
 
     support_box.position.x = position.x;
@@ -30,51 +30,102 @@ function make_player(scene, position) {
 
     // ==== legs ====
     var right_leg = new Physijs.BoxMesh(
-        new THREE.BoxGeometry(4, 4, LEGS_HEIGHT),
+        new THREE.BoxGeometry(4, 4, LEGS_HEIGHT + 8),
         new THREE.MeshBasicMaterial({ color: 0xdeadbe, wireframe: true }),
-        0.1
+        200
     );
     right_leg.position.x = position.x;
-    right_leg.position.y = position.y + 3;
-    right_leg.position.z = position.z;// - 3 - LEGS_HEIGHT;
+    right_leg.position.y = position.y + 8;
+    right_leg.position.z = position.z - 0.5;// - 3 - LEGS_HEIGHT;
     scene.add(right_leg);
-
+    
     var left_leg = new Physijs.BoxMesh(
-        new THREE.BoxGeometry(4, 4, LEGS_HEIGHT),
+        new THREE.BoxGeometry(4, 4, LEGS_HEIGHT + 8),
         new THREE.MeshBasicMaterial({ color: 0xdeadbe, wireframe: true }),
-        0.1
+        200
     );
     left_leg.position.x = position.x;
-    left_leg.position.y = position.y - 3;
-    left_leg.position.z = position.z;//  - LEGS_HEIGHT;
+    left_leg.position.y = position.y - 8;
+    left_leg.position.z = position.z - 0.5;//  - LEGS_HEIGHT;
     scene.add(left_leg);
+    
 
     // ==== constraints ====
     
-    var right_leg_constraint = new Physijs.HingeConstraint(
+    var right_leg_constraint = new Physijs.DOFConstraint(
         right_leg,
-        box,
-        new THREE.Vector3( 0, 0, 23 ), // point in the scene to apply the constraint
-        new THREE.Vector3( 1, 0, 0 ) // Axis along which the hinge lies - in this case it is the X axis
+        support_box,
+        new THREE.Vector3(position.x, position.y, position.z + LEGS_HEIGHT), // point in the scene to apply the constraint
+        // new THREE.Vector3(0, 1, 0) // Axis along which the hinge lies - in this case it is the X axis
     );
+
+    var left_leg_constraint = new Physijs.DOFConstraint(
+        left_leg,
+        support_box,
+        new THREE.Vector3(position.x, position.y, position.z + LEGS_HEIGHT), // point in the scene to apply the constraint
+        // new THREE.Vector3( 0, 1, 0 ) // Axis along which the hinge lies - in this case it is the X axis
+    );
+
+    scene.addConstraint(left_leg_constraint);
     scene.addConstraint(right_leg_constraint);
 
+    left_leg_constraint.setAngularLowerLimit({ x: 0, y: -Math.PI, z: 0 });
+    left_leg_constraint.setAngularUpperLimit({ x: 0, y: Math.PI, z: 0 });
+    right_leg_constraint.setAngularLowerLimit({ x: 0, y: -Math.PI, z: 0 });
+    right_leg_constraint.setAngularUpperLimit({ x: 0, y: Math.PI, z: 0 });
+
     /*
-    var left_leg_constraint = new Physijs.HingeConstraint(
-        left_leg,
-        box,
-        new THREE.Vector3( 0, 0, 0 ), // point in the scene to apply the constraint
-        new THREE.Vector3( 1, 0, 0 ) // Axis along which the hinge lies - in this case it is the X axis
+    right_leg_constraint.setLimits(
+        -Math.PI, // minimum angle of motion, in radians
+        Math.PI, // maximum angle of motion, in radians
+        100, // applied as a factor to constraint error
+        0, // controls bounce at limit (0.0 == no bounce)
     );
-    scene.addConstraint(left_leg_constraint);
-    */
     
+    left_leg_constraint.setLimits(
+        -Math.PI, // minimum angle of motion, in radians
+        Math.PI, // maximum angle of motion, in radians
+        100, // applied as a factor to constraint error
+        1, // controls bounce at limit (0.0 == no bounce)
+    );
+    */
     
     // box.rotation.x = Math.PI/8;
     // car_body.receiveShadow = car_body.castShadow = true;
     // box.setAngularFactor(new THREE.Vector3( 0, 0, 0 ));
     // box.setCcdMotionThreshold(0.1);
     // box.setCcdSweptSphereRadius(1);
+
+    /*
+    var car_body = new Physijs.BoxMesh(
+        new THREE.BoxGeometry( 10, 5, 7 ),
+        car_material,
+        1000
+    );
+    car_body.position.y = 10;
+    // car_body.receiveShadow = car_body.castShadow = true;
+    scene.add(car_body);
+    
+    var car_wheel = new Physijs.CylinderMesh(
+        wheel_geometry,
+        wheel_material,
+        500
+    );
+    car_wheel.rotation.x = Math.PI / 2;
+    car_wheel.position.set( 3.5, 6.5, 5 );
+    // car.wheel_bl.receiveShadow = car.wheel_bl.castShadow = true;
+    scene.add( car.wheel_bl );
+    var car_wheel_constraint = new Physijs.DOFConstraint(
+        car_wheel, car_body, new THREE.Vector3( 10,10,10 )
+    );
+    scene.addConstraint(car_wheel_constraint);
+    car_wheel_constraint.setAngularLowerLimit({ x: 0, y: 0, z: 0 });
+    car_wheel_constraint.setAngularUpperLimit({ x: 0, y: 0, z: 0 });
+
+    car.wheel_bl_constraint.configureAngularMotor( 2, 1, 0, 20, 5000 );
+    //car.wheel_br_constraint.configureAngularMotor( 2, 1, 0, 20, 5000 );
+    car.wheel_bl_constraint.enableAngularMotor( 2 );
+    */
 
     return support_box;
 }
@@ -140,27 +191,21 @@ function scene_init(scene) {
     building.position.z = 5;
     building.position.y = 7;
     // car_body.receiveShadow = car_body.castShadow = true;
-    scene.add(building);
+    // scene.add(building);
 
     custom_object = new Physijs.ConcaveMesh(custom_geometry, basic_material, 1000);
     custom_object.position.z = 30;
     custom_object.position.x = 20;
     // scene.add(custom_object);
-
-    /*var constraint = new Physijs.DOFConstraint(
-        custom_object,
-        undefined,
-        new THREE.Vector3( 0, 0, 0 )
-    );*/
-    // scene.addConstraint(constraint);
-    // constraint.setAngularLowerLimit( new THREE.Vector3( 0, -Math.PI, 0 ) );
-    // constraint.setAngularUpperLimit( new THREE.Vector3( 0, Math.PI, 0 ) );
 }
 
 function scene_update(scene, t, delta) {
     // custom_object.rotation.x += 0.01;
+
+    
     player.setAngularFactor(new THREE.Vector3( 0, 0, 0 ));
     player.setAngularVelocity(new THREE.Vector3( 0, 0, 0 ));
-    player.rotation.x = 0;
-    player.rotation.y = 0;
+    //player.rotation.x = 0;
+    //player.rotation.y = 0;
+    
 }
