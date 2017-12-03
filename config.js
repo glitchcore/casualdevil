@@ -1,1 +1,1 @@
-var log = false;
+var log = true;

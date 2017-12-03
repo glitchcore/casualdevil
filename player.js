@@ -4,7 +4,7 @@ function player_init(scene, position) {
     var BODY_HEIGHT = 15;
 
     var material = new THREE.MeshPhongMaterial({
-        color: 0xffffff,
+        color: 0xff0000,
         specular: 0xffffff,
         shininess: 100
     });
@@ -80,7 +80,7 @@ function player_init(scene, position) {
     player.legs.right.setAngularUpperLimit({ x: 0, y: Math.PI, z: 0 });
     player.legs.left.setAngularLowerLimit({ x: 0, y: -Math.PI, z: 0 });
     player.legs.left.setAngularUpperLimit({ x: 0, y: Math.PI, z: 0 });
-    
+
     // box.rotation.x = Math.PI/8;
     // car_body.receiveShadow = car_body.castShadow = true;
     // box.setAngularFactor(new THREE.Vector3( 0, 0, 0 ));
@@ -93,43 +93,15 @@ function player_init(scene, position) {
 var legs_flag = 0;
 var legs_speed = 400;
 
-function player_update(v) {
+function player_control(v) {
     var player = v.player;
     var controls = v.controls;
     var scene = v.scene;
     var t = v.t;
     var delta = v.delta;
-
+    
     if(controls.jump_event === true) {
         controls.jump_event = t + 0.2;
-    }
-    // custom_object.rotation.x += 0.01;
-    var speed = player.getLinearVelocity().length();
-
-    if(speed > 400) {
-        player.setLinearVelocity(
-            new THREE.Vector3(
-                player.getLinearVelocity().x * 0.8,
-                player.getLinearVelocity().y * 0.8,
-                player.getLinearVelocity().z
-            )
-        )
-    }
-
-    if(t*legs_speed % 2 > 1 && legs_flag == 1) {
-        // legs_speed = speed;
-        // console.log("set to odd");
-        player.legs.left.configureAngularMotor(1, -Math.PI/2, Math.PI/6, 100, 1000);
-        player.legs.right.configureAngularMotor(1, -Math.PI/6, Math.PI/2, -100, 1000);
-        legs_flag = 0;
-    }
-
-    if(t*legs_speed % 2 <= 1 && legs_flag == 0) {
-        // legs_speed = speed;
-        // console.log("set to even");
-        player.legs.left.configureAngularMotor(1, -Math.PI/6, Math.PI/2, -100, 1000);
-        player.legs.right.configureAngularMotor(1, -Math.PI/2, Math.PI/6, 100, 1000);
-        legs_flag = 1;
     }
 
     if(controls.turn === LEFT) {
@@ -169,6 +141,42 @@ function player_update(v) {
                 100
             )
         )
+    }
+}
+
+function player_update(v) {
+    var player = v.player;
+    var scene = v.scene;
+    var t = v.t;
+    var delta = v.delta;
+
+    // custom_object.rotation.x += 0.01;
+    var speed = player.getLinearVelocity().length();
+
+    if(speed > 400) {
+        player.setLinearVelocity(
+            new THREE.Vector3(
+                player.getLinearVelocity().x * 0.8,
+                player.getLinearVelocity().y * 0.8,
+                player.getLinearVelocity().z
+            )
+        )
+    }
+
+    if(t*legs_speed % 2 > 1 && legs_flag == 1) {
+        // legs_speed = speed;
+        // console.log("set to odd");
+        player.legs.left.configureAngularMotor(1, -Math.PI/2, Math.PI/6, 100, 1000);
+        player.legs.right.configureAngularMotor(1, -Math.PI/6, Math.PI/2, -100, 1000);
+        legs_flag = 0;
+    }
+
+    if(t*legs_speed % 2 <= 1 && legs_flag == 0) {
+        // legs_speed = speed;
+        // console.log("set to even");
+        player.legs.left.configureAngularMotor(1, -Math.PI/6, Math.PI/2, -100, 1000);
+        player.legs.right.configureAngularMotor(1, -Math.PI/2, Math.PI/6, 100, 1000);
+        legs_flag = 1;
     }
 
     // console.log("speed:", speed);

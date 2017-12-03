@@ -9,6 +9,8 @@ var controls = {
     turn: IDLE,
     shoot_event: null,
     jump_event: null,
+    restart_event: null,
+    mode_event: null,
 
     key_state: {}
 };
@@ -18,7 +20,7 @@ document.addEventListener(
     function(ev) {
         if(!(ev.keyCode in controls.key_state)) {
             controls.key_state[ev.keyCode] = null;
-            // console.log("press:", ev.keyCode);
+            if(log) console.log("press:", ev.keyCode);
             switch(ev.keyCode) {
                 case 37:
                     // Left
@@ -52,6 +54,18 @@ document.addEventListener(
                     // Lshift
                     if(log) console.log("Speed up");
                     controls.run = true;
+                break;
+
+                case 82:
+                    // R
+                    if(log) console.log("Restart game");
+                    controls.restart_event = true;
+                break;
+
+                case 86:
+                    // V
+                    if(log) console.log("Change view/mode");
+                    controls.mode_event = true;
                 break;
             }
         }
