@@ -38,15 +38,11 @@ function scene_init(scene) {
     void_material.transparent = true;
     void_material.opacity = 0.8;
 
-    var ground = new Physijs.BoxMesh(
-        new THREE.BoxGeometry(4000, 2000, 1, 10,10,10),
-        new THREE.MeshBasicMaterial({color: 0xdeadbe, wireframe: true}),
-        0 // mass
-    );
-    scene.add(ground);
+    add_ground_area(scene, {x:0, y:0});
 
     player = player_init(scene, new THREE.Vector3( 0, 0, 20 ));
 
+    /*
     var building = new Physijs.BoxMesh(
         new THREE.BoxGeometry(50, 50, 50),
         basic_material,
@@ -56,6 +52,7 @@ function scene_init(scene) {
     building.position.y = 70;
     // car_body.receiveShadow = car_body.castShadow = true;
     scene.add(building);
+    */
 
     var dirLight = new THREE.DirectionalLight( 0xffffff, 0.05 );
     dirLight.position.set( 0, -1, 0 ).normalize();
@@ -74,6 +71,7 @@ function scene_init(scene) {
 }
 
 var view_camera = new THREE.Vector3(0,0,0);
+var last_area_hash = "";
 
 function scene_update(scene, t, delta) {
     if(controls.mode_event) {
@@ -145,4 +143,19 @@ function scene_update(scene, t, delta) {
         t: t,
         delta: delta
     });
+
+    var area = check_area(scene, player.position.x, player.position.y);
+    if(last_area_hash !== area_hash(area)) {
+        last_area_hash = area_hash(area);
+        console.log("area changed to", last_area_hash);
+
+        for(var x = area.x - 1; x <= area.x + 1; x++) {
+            for(var y = area.y - 1; y <= area.y + 1; y++) {
+                console.log("add area:", x, y);
+                setTimeout(function() {
+                    add_ground_area(scene, this)
+                }.bind({x:x, y:y}), 1)
+            }
+        }
+    }
 }

@@ -105,9 +105,9 @@ function player_control(v) {
     }
 
     if(controls.turn === LEFT) {
-        player.setAngularVelocity(new THREE.Vector3(0, 0, 1.2));
+        player.setAngularVelocity(new THREE.Vector3(0, 0, PLAYER_ROTATE_SPEED));
     } else if(controls.turn === RIGHT) {
-        player.setAngularVelocity(new THREE.Vector3(0, 0, -1.2));
+        player.setAngularVelocity(new THREE.Vector3(0, 0, -PLAYER_ROTATE_SPEED));
     } else { // IDLE
         player.setAngularVelocity(new THREE.Vector3(0, 0, 0));
         // player.rotation.x = 0;
