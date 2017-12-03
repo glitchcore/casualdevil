@@ -7,7 +7,7 @@ var FIXED = 3;
 var mode = GAME;
 
 function scene_init(scene) {
-    camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 15000 );
+    camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, AREA_RADIUS);
 
     /*
     camera.position.set(0, 200, 10);
@@ -24,7 +24,7 @@ function scene_init(scene) {
     */
 
     scene.background = new THREE.Color().setHSL( 0.51, 0.8, 0.08 );
-    scene.fog = new THREE.Fog( scene.background, 3500, 15000 );
+    scene.fog = new THREE.Fog( scene.background, AREA_RADIUS/2, AREA_RADIUS);
 
     scene.setGravity(new THREE.Vector3( 0, 0, -120 ));
 
@@ -41,18 +41,6 @@ function scene_init(scene) {
     add_ground_area(scene, {x:0, y:0});
 
     player = player_init(scene, new THREE.Vector3( 0, 0, 20 ));
-
-    /*
-    var building = new Physijs.BoxMesh(
-        new THREE.BoxGeometry(50, 50, 50),
-        basic_material,
-        1000
-    );
-    building.position.z = 20;
-    building.position.y = 70;
-    // car_body.receiveShadow = car_body.castShadow = true;
-    scene.add(building);
-    */
 
     var dirLight = new THREE.DirectionalLight( 0xffffff, 0.05 );
     dirLight.position.set( 0, -1, 0 ).normalize();
@@ -149,13 +137,15 @@ function scene_update(scene, t, delta) {
         last_area_hash = area_hash(area);
         console.log("area changed to", last_area_hash);
 
+        
         for(var x = area.x - 1; x <= area.x + 1; x++) {
             for(var y = area.y - 1; y <= area.y + 1; y++) {
-                console.log("add area:", x, y);
+                // console.log("add area:", x, y);
                 setTimeout(function() {
                     add_ground_area(scene, this)
                 }.bind({x:x, y:y}), 1)
             }
         }
+        
     }
 }
