@@ -23,7 +23,7 @@ function scene_init(scene) {
     camera.rotation.z = -2.353;
     */
 
-    scene.background = new THREE.Color().setHSL( 0.51, 0.8, 0.08 );
+    scene.background = new THREE.Color().setHSL( 0.51, 0.0, 0.02 );
     scene.fog = new THREE.Fog( scene.background, AREA_RADIUS/2, AREA_RADIUS);
 
     scene.setGravity(new THREE.Vector3( 0, 0, -120 ));
@@ -47,54 +47,23 @@ function scene_init(scene) {
     var ENEMY_SIZE = 8;
 
     enemy_geometry.vertices.push(
-        new THREE.Vector3(-ENEMY_SIZE, -ENEMY_SIZE, -ENEMY_SIZE),
-        new THREE.Vector3(-ENEMY_SIZE,  ENEMY_SIZE, -ENEMY_SIZE),
-        new THREE.Vector3( ENEMY_SIZE,  ENEMY_SIZE, -ENEMY_SIZE),
-        new THREE.Vector3( ENEMY_SIZE, -ENEMY_SIZE, -ENEMY_SIZE),
-        new THREE.Vector3(-ENEMY_SIZE, -ENEMY_SIZE,  ENEMY_SIZE),
-        new THREE.Vector3( ENEMY_SIZE, -ENEMY_SIZE,  ENEMY_SIZE),
-        new THREE.Vector3(-ENEMY_SIZE,  ENEMY_SIZE,  ENEMY_SIZE),
-        new THREE.Vector3( ENEMY_SIZE,  ENEMY_SIZE,  ENEMY_SIZE),
-
-        new THREE.Vector3( 0, 0, -3 * ENEMY_SIZE),
-        new THREE.Vector3( 0, 0, 3 * ENEMY_SIZE),
-        new THREE.Vector3( 0, -3 * ENEMY_SIZE, 0),
-        new THREE.Vector3( 0, 3 * ENEMY_SIZE, 0)
+        new THREE.Vector3(-ENEMY_SIZE, ENEMY_SIZE, -ENEMY_SIZE),
+        new THREE.Vector3(-ENEMY_SIZE, ENEMY_SIZE,  ENEMY_SIZE),
+        new THREE.Vector3(-ENEMY_SIZE, -ENEMY_SIZE, ENEMY_SIZE),
+        new THREE.Vector3( ENEMY_SIZE, ENEMY_SIZE,  ENEMY_SIZE),
     );
 
     enemy_geometry.faces.push(
-        new THREE.Face3(8, 0, 1),
-        new THREE.Face3(8, 1, 2),
-        new THREE.Face3(8, 2, 3),
-        new THREE.Face3(8, 3, 0),
-
-        new THREE.Face3(10, 3, 5),
-        new THREE.Face3(10, 4, 5),
-        new THREE.Face3(10, 4, 0),
-        new THREE.Face3(10, 0, 3),
-
-        new THREE.Face3(9, 6, 5),
-        new THREE.Face3(9, 4, 5),
-        new THREE.Face3(9, 4, 7),
-        new THREE.Face3(9, 7, 6),
-
-        new THREE.Face3(11, 7, 6),
-        new THREE.Face3(11, 6, 1),
-        new THREE.Face3(11, 1, 2),
-        new THREE.Face3(11, 2, 7),
-
-        new THREE.Face3(0, 1, 6),
-        new THREE.Face3(0, 6, 4),
-
-        new THREE.Face3(2, 3, 7),
-        new THREE.Face3(3, 7, 5),
-        // new THREE.Face3(11, 2, 7),
+        new THREE.Face3(0, 1, 2),
+        new THREE.Face3(1, 2, 3),
+        new THREE.Face3(2, 3, 0),
+        new THREE.Face3(0, 3, 1)
     );
 
     var enemy = new Physijs.ConcaveMesh(
         enemy_geometry,
-        new THREE.MeshPhongMaterial({color: 0xff0000, specular: 0xffffff, shininess: 5}),
-        0
+        new THREE.MeshPhongMaterial({color: 0xff0000, specular: 0xff0000, shininess: 5}),
+        10
     );
     enemy.position.x = 0;
     enemy.position.y = 0;
