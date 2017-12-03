@@ -292,8 +292,8 @@ function scene_init(scene) {
     void_material.opacity = 0.8;
 
     var ground = new Physijs.BoxMesh(
-        new THREE.BoxGeometry(200, 100, 1),
-        void_material,
+        new THREE.BoxGeometry(4000, 2000, 1, 10,10,10),
+        new THREE.MeshBasicMaterial({color: 0xdeadbe, wireframe: true}),
         0 // mass
     );
     scene.add(ground);
@@ -339,9 +339,28 @@ function scene_update(scene, t, delta) {
         flag = 1;
     }
 
+    if(controls.turn === LEFT) {
+        player.setAngularVelocity(new THREE.Vector3(0, 0, 1.2));
+    } else if(controls.turn === RIGHT) {
+        player.setAngularVelocity(new THREE.Vector3(0, 0, -1.2));
+    } else { // IDLE
+        player.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+    }
+
+    camera.position.set(
+        player.position.x + 250*Math.cos(player.rotation.z),
+        player.position.y + 250*Math.sin(player.rotation.z),
+        player.position.z + 60
+    );
+    camera.rotation.x = -Math.PI/2;
+    camera.rotation.y = -player.rotation.z + Math.PI/2;
+    camera.rotation.z = -Math.PI;
+
+    // console.log("angle:", player.rotation.z);
+
     
     // player.setAngularFactor(new THREE.Vector3( 0, 0, 0 ));
-    player.setAngularVelocity(new THREE.Vector3(0, 0, 0.5));
+    
     // player.setLinearVelocity(new THREE.Vector3(5, 0, 0));
     // player.rotation.z += 0.05;
     // player.rotation.y = 0;    
