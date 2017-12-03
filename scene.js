@@ -131,9 +131,12 @@ function scene_update(scene, t, delta) {
             player.position.y + 250*Math.sin(view_camera.z),
             player.position.z + 60
         );
-        camera.rotation.x = -Math.PI/2;
-        camera.rotation.y = -view_camera.z + Math.PI/2;
-        camera.rotation.z = -Math.PI;
+        // camera.rotation.z = -view_camera.z + Math.PI/2;
+        // camera.rotation.x = -Math.PI/2;
+        // camera.rotation.y = -Math.PI;
+        camera.rotation.z = 0;
+        camera.rotation.x = Math.PI/2;
+        camera.rotation.y = Math.PI/2 + view_camera.z;
     }
 
     player_update({

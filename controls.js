@@ -37,6 +37,9 @@ document.addEventListener(
                     if(log) console.log("Run");
                     controls.forward = true;
                 break;
+                case 40:
+                    // Down
+                break;
 
                 case 32:
                     // space
@@ -93,6 +96,9 @@ document.addEventListener(
                     // Up
                     if(log) console.log("Stop");
                     controls.forward = false;
+                break;
+                case 40:
+                    // Down
                 break;
 
                 case 16:
