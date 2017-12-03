@@ -102,9 +102,15 @@ function make_player(scene, position) {
     var LEGS_HEIGHT = 20;
     var BODY_HEIGHT = 15;
 
+    var material = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        specular: 0xffffff,
+        shininess: 50
+    });
+
     box = new Physijs.BoxMesh(
         new THREE.BoxGeometry(10, 10, BODY_HEIGHT),
-        new THREE.MeshBasicMaterial({ color: 0xdeadbe, wireframe: true }),
+        material,
         1000
     );
 
@@ -126,7 +132,7 @@ function make_player(scene, position) {
     // ==== legs ====
     var right_leg = new Physijs.BoxMesh(
         new THREE.BoxGeometry(4, 4, LEGS_HEIGHT + 8),
-        new THREE.MeshBasicMaterial({ color: 0xdeadbe, wireframe: true }),
+        material,
         1
     );
     right_leg.position.x = position.x;
@@ -136,7 +142,7 @@ function make_player(scene, position) {
     
     var left_leg = new Physijs.BoxMesh(
         new THREE.BoxGeometry(4, 4, LEGS_HEIGHT + 8),
-        new THREE.MeshBasicMaterial({ color: 0xdeadbe, wireframe: true }),
+        material,
         1
     );
     left_leg.position.x = position.x;
@@ -252,7 +258,7 @@ function scene_init(scene) {
     scene.background = new THREE.Color().setHSL( 0.51, 0.8, 0.08 );
     scene.fog = new THREE.Fog( scene.background, 3500, 15000 );
 
-    scene.setGravity(new THREE.Vector3( 0, 0, -60 ));
+    scene.setGravity(new THREE.Vector3( 0, 0, -120 ));
 
     // var texture = new THREE.TextureLoader().load( 'textures/crate.gif' );
 
@@ -302,14 +308,14 @@ function scene_init(scene) {
     // player.position.z = 40;
 
     var building = new Physijs.BoxMesh(
-        new THREE.BoxGeometry(10, 10, 10),
+        new THREE.BoxGeometry(50, 50, 50),
         basic_material,
         1000
     );
-    building.position.z = 5;
-    building.position.y = 7;
+    building.position.z = 20;
+    building.position.y = 70;
     // car_body.receiveShadow = car_body.castShadow = true;
-    // scene.add(building);
+    scene.add(building);
 
     custom_object = new Physijs.ConcaveMesh(custom_geometry, basic_material, 1000);
     custom_object.position.z = 30;
@@ -320,19 +326,35 @@ function scene_init(scene) {
 }
 
 var flag = 0;
+var legs_speed = 400;
 
 function scene_update(scene, t, delta) {
+    if(controls.jump_event === true) {
+        controls.jump_event = t + 0.2;
+    }
     // custom_object.rotation.x += 0.01;
-    
+    var speed = player.getLinearVelocity().length();
 
-    if(t*3 % 2 > 1 && flag == 1) {
+    if(speed > 400) {
+        player.setLinearVelocity(
+            new THREE.Vector3(
+                player.getLinearVelocity().x * 0.8,
+                player.getLinearVelocity().y * 0.8,
+                player.getLinearVelocity().z
+            )
+        )
+    }
+
+    if(t*legs_speed % 2 > 1 && flag == 1) {
+        // legs_speed = speed;
         // console.log("set to odd");
         left_leg_constraint.configureAngularMotor(1, -Math.PI/2, Math.PI/6, 100, 1000);
         right_leg_constraint.configureAngularMotor(1, -Math.PI/6, Math.PI/2, -100, 1000);
         flag = 0;
     }
 
-    if(t*3 % 2 <= 1 && flag == 0) {
+    if(t*legs_speed % 2 <= 1 && flag == 0) {
+        // legs_speed = speed;
         // console.log("set to even");
         left_leg_constraint.configureAngularMotor(1, -Math.PI/6, Math.PI/2, -100, 1000);
         right_leg_constraint.configureAngularMotor(1, -Math.PI/2, Math.PI/6, 100, 1000);
@@ -345,6 +367,37 @@ function scene_update(scene, t, delta) {
         player.setAngularVelocity(new THREE.Vector3(0, 0, -1.2));
     } else { // IDLE
         player.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+        // player.rotation.x = 0;
+        // player.rotation.y = 0;
+        // player.__dirtyRotation = true;
+    }
+
+    if(controls.forward) {
+        legs_speed = 2;
+        player.applyCentralImpulse(new THREE.Vector3(
+            -6000*Math.cos(player.rotation.z),
+            -6000*Math.sin(player.rotation.z),
+            0
+        ));
+    } else {
+        legs_speed = 0;
+        player.setLinearVelocity(
+            new THREE.Vector3(
+                0,
+                0,
+                player.getLinearVelocity().z
+            )
+        )
+    }
+
+    if(controls.jump_event > t) {
+        player.setLinearVelocity(
+            new THREE.Vector3(
+                player.getLinearVelocity().x,
+                player.getLinearVelocity().y,
+                100
+            )
+        )
     }
 
     camera.position.set(
@@ -356,7 +409,7 @@ function scene_update(scene, t, delta) {
     camera.rotation.y = -player.rotation.z + Math.PI/2;
     camera.rotation.z = -Math.PI;
 
-    // console.log("angle:", player.rotation.z);
+    // console.log("speed:", speed);
 
     
     // player.setAngularFactor(new THREE.Vector3( 0, 0, 0 ));
