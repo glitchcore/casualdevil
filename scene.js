@@ -40,7 +40,7 @@ function scene_init(scene) {
 
     var ground = new Physijs.BoxMesh(
         new THREE.BoxGeometry(4000, 2000, 1, 10,10,10),
-        new THREE.MeshBasicMaterial({color: 0xdeadbe, wireframe: true}),
+        void_material, //new THREE.MeshBasicMaterial({color: 0xdeadbe, wireframe: true}),
         0 // mass
     );
     scene.add(ground);
