@@ -1,5 +1,4 @@
 var camera, scene, renderer;
-var controls;
 
 var clock = new THREE.Clock();
 
@@ -21,15 +20,6 @@ function init() {
             scene.simulate(undefined, 2);
         }
     );
-
-    // controls = new THREE.FlyControls( camera );
-    
-    // controls.movementSpeed = 1000;
-    // controls.domElement = container;
-    // controls.rollSpeed = Math.PI / 5;
-    // controls.autoForward = false;
-    // controls.dragToLook = true;
-    
 
     // scene
     camera = scene_init(scene);
@@ -64,8 +54,6 @@ function animate(t_now) {
     var t = (t_now - start)/1000;
 
     scene_update(scene, t, delta);
-
-    // controls.update(delta);
     renderer.render(scene, camera);
     
     // console.log("camera:", camera.rotation);
