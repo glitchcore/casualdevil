@@ -21,7 +21,7 @@ function make_player(scene, position) {
     var support_box = new Physijs.BoxMesh(
         new THREE.BoxGeometry(1, 1, LEGS_HEIGHT/2),
         new THREE.MeshLambertMaterial({color: 0xffffff, transparent: true, opacity: 0.0}),
-        0
+        1000
     );
 
     support_box.position.x = position.x;
@@ -39,7 +39,7 @@ function make_player(scene, position) {
     );
     right_leg.position.x = position.x;
     right_leg.position.y = position.y + 8;
-    right_leg.position.z = position.z - 1;// - 3 - LEGS_HEIGHT;
+    right_leg.position.z = position.z;// - 3 - LEGS_HEIGHT;
     scene.add(right_leg);
     
     var left_leg = new Physijs.BoxMesh(
@@ -49,7 +49,7 @@ function make_player(scene, position) {
     );
     left_leg.position.x = position.x;
     left_leg.position.y = position.y - 8;
-    left_leg.position.z = position.z - 1;//  - LEGS_HEIGHT;
+    left_leg.position.z = position.z;//  - LEGS_HEIGHT;
     scene.add(left_leg);
     
 
@@ -76,10 +76,10 @@ function make_player(scene, position) {
     left_leg_constraint.enableAngularMotor(1);
     right_leg_constraint.enableAngularMotor(1);
 
-    // left_leg_constraint.setAngularLowerLimit({ x: 0, y: -Math.PI*1/8, z: 0 });
-    // left_leg_constraint.setAngularUpperLimit({ x: 0, y: Math.PI*1/8, z: 0 });
-    //right_leg_constraint.setAngularLowerLimit({ x: 0, y: -Math.PI, z: 0 });
-    //right_leg_constraint.setAngularUpperLimit({ x: 0, y: Math.PI, z: 0 });
+    left_leg_constraint.setAngularLowerLimit({ x: 0, y: -Math.PI, z: 0 });
+    left_leg_constraint.setAngularUpperLimit({ x: 0, y: Math.PI, z: 0 });
+    right_leg_constraint.setAngularLowerLimit({ x: 0, y: -Math.PI, z: 0 });
+    right_leg_constraint.setAngularUpperLimit({ x: 0, y: Math.PI, z: 0 });
 
     //right_leg_constraint.setAngularLowerLimit({ x: 0, y: 0, z: 0 });
     //right_leg_constraint.setAngularUpperLimit({ x: 0, y: 0, z: 0 });
@@ -233,7 +233,8 @@ function scene_update(scene, t, delta) {
 
     
     // player.setAngularFactor(new THREE.Vector3( 0, 0, 0 ));
-    // player.setAngularVelocity(new THREE.Vector3( 0, 0, 0 ));
-    //player.rotation.x = 0;
-    //player.rotation.y = 0;    
+    player.setAngularVelocity(new THREE.Vector3(0, 0, 0.5));
+    // player.setLinearVelocity(new THREE.Vector3(5, 0, 0));
+    // player.rotation.z += 0.05;
+    // player.rotation.y = 0;    
 }
