@@ -22,40 +22,17 @@ function init() {
         }
     );
 
-    // camera
+    // controls = new THREE.FlyControls( camera );
     
-    camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 15000 );
-    
-    // camera.lookAt(scene.position);
-    // camera.position.x = 100;
-    // camera.rotation.x = Math.PI / 4;
-    // camera.rotation.y = Math.PI / 2;
-    // camera.rotation.z = 0;//Math.PI / 4;
-
-    /*
-    camera.position.set(200, 0, 10);
-    camera.rotation.x = -2.361533347852155;
-    camera.rotation.y = 1.5506897537101544;
-    camera.rotation.z = -2.353;
-    */
-    
-    camera.position.set(0, 200, 10);
-    camera.rotation.x = -Math.PI/2;
-    camera.rotation.y = 0;
-    camera.rotation.z = -Math.PI;
-
-    controls = new THREE.FlyControls( camera );
-    
-    controls.movementSpeed = 1000;
-    controls.domElement = container;
-    controls.rollSpeed = Math.PI / 5;
-    controls.autoForward = false;
-    controls.dragToLook = true;
+    // controls.movementSpeed = 1000;
+    // controls.domElement = container;
+    // controls.rollSpeed = Math.PI / 5;
+    // controls.autoForward = false;
+    // controls.dragToLook = true;
     
 
     // scene
-
-    scene_init(scene);
+    camera = scene_init(scene);
 
     renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
@@ -88,8 +65,8 @@ function animate(t_now) {
 
     scene_update(scene, t, delta);
 
-    controls.update(delta);
+    // controls.update(delta);
     renderer.render(scene, camera);
-
+    
     // console.log("camera:", camera.rotation);
 }

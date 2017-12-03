@@ -6,6 +6,98 @@ var player;
 var left_leg_constraint;
 var right_leg_constraint;
 
+var IDLE = 0;
+var LEFT = 1;
+var RIGHT = 2;
+
+var controls = {
+    forward: false,
+    run: false,
+    turn: IDLE,
+    shoot_event: null,
+    jump_event: null,
+
+    key_state: {}
+};
+
+document.addEventListener(
+    'keydown',
+    function(ev) {
+        if(!(ev.keyCode in controls.key_state)) {
+            controls.key_state[ev.keyCode] = null;
+            // console.log("press:", ev.keyCode);
+            switch(ev.keyCode) {
+                case 37:
+                    // Left
+                    console.log("turn Left");
+                    controls.turn = LEFT;
+                break;
+                case 39:
+                    // Right
+                    console.log("turn Right");
+                    controls.turn = RIGHT;
+                break;
+                case 38:
+                    // Up
+                    console.log("Run");
+                    controls.forward = true;
+                break;
+
+                case 32:
+                    // space
+                    console.log("Jump");
+                    controls.jump_event = true;
+                break;
+
+                case 88:
+                    // x
+                    console.log("Shoot");
+                    controls.shoot_event = true;
+                break;
+
+                case 16:
+                    // Lshift
+                    console.log("Speed up");
+                    controls.run = true;
+                break;
+            }
+        }
+    }
+);
+
+document.addEventListener(
+    'keyup',
+    function(ev) {
+        if(ev.keyCode in controls.key_state) {
+            delete controls.key_state[ev.keyCode];
+            switch(ev.keyCode) {
+                case 37:
+                    // Left
+                    console.log("Left -> idle");
+                    controls.turn = IDLE;
+                break;
+                case 39:
+                    // Right
+                    console.log("Right -> idle");
+                    controls.turn = IDLE;
+                break;
+                
+                case 38:
+                    // Up
+                    console.log("Stop");
+                    controls.forward = false;
+                break;
+
+                case 16:
+                    // Lshift
+                    console.log("Speed normal");
+                    controls.run = false;
+                break;
+            }
+        }
+    }
+);
+
 function make_player(scene, position) {
     var LEGS_HEIGHT = 20;
     var BODY_HEIGHT = 15;
@@ -143,6 +235,20 @@ function make_player(scene, position) {
 }
 
 function scene_init(scene) {
+    camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 15000 );
+
+    camera.position.set(0, 200, 10);
+    camera.rotation.x = -Math.PI/2;
+    camera.rotation.y = 0;
+    camera.rotation.z = -Math.PI;
+
+    /*
+    camera.position.set(200, 0, 10);
+    camera.rotation.x = -2.361533347852155;
+    camera.rotation.y = 1.5506897537101544;
+    camera.rotation.z = -2.353;
+    */
+
     scene.background = new THREE.Color().setHSL( 0.51, 0.8, 0.08 );
     scene.fog = new THREE.Fog( scene.background, 3500, 15000 );
 
@@ -209,6 +315,8 @@ function scene_init(scene) {
     custom_object.position.z = 30;
     custom_object.position.x = 20;
     // scene.add(custom_object);
+
+    return camera;
 }
 
 var flag = 0;
@@ -218,14 +326,14 @@ function scene_update(scene, t, delta) {
     
 
     if(t*3 % 2 > 1 && flag == 1) {
-        console.log("set to odd");
+        // console.log("set to odd");
         left_leg_constraint.configureAngularMotor(1, -Math.PI/2, Math.PI/6, 100, 1000);
         right_leg_constraint.configureAngularMotor(1, -Math.PI/6, Math.PI/2, -100, 1000);
         flag = 0;
     }
 
     if(t*3 % 2 <= 1 && flag == 0) {
-        console.log("set to even");
+        // console.log("set to even");
         left_leg_constraint.configureAngularMotor(1, -Math.PI/6, Math.PI/2, -100, 1000);
         right_leg_constraint.configureAngularMotor(1, -Math.PI/2, Math.PI/6, 100, 1000);
         flag = 1;
