@@ -38,10 +38,11 @@ function scene_init(scene) {
     void_material.transparent = true;
     void_material.opacity = 0.8;
 
-    add_ground_area(scene, {x:0, y:0});
+    add_ground_area(scene, {x:0, y:0}, false);
 
     player = player_init(scene, new THREE.Vector3( 0, 0, 20 ));
 
+    /*
     var dirLight = new THREE.DirectionalLight( 0xffffff, 0.05 );
     dirLight.position.set( 0, -1, 0 ).normalize();
     scene.add(dirLight);
@@ -54,6 +55,7 @@ function scene_init(scene) {
     dirLight.position.set( 1, 1, 0 ).normalize();
     scene.add( dirLight );
     dirLight.color.setHSL( 0.1, 0.7, 0.5 );
+    */
 
     return camera;
 }
@@ -142,7 +144,7 @@ function scene_update(scene, t, delta) {
             for(var y = area.y - 1; y <= area.y + 1; y++) {
                 // console.log("add area:", x, y);
                 setTimeout(function() {
-                    add_ground_area(scene, this)
+                    add_ground_area(scene, this, true)
                 }.bind({x:x, y:y}), 1)
             }
         }

@@ -1,17 +1,20 @@
 
+var basic_material = new THREE.MeshBasicMaterial( { color: 0xdeadbe, wireframe: true } );
+basic_material.wireframeLinewidth = 1.5;
+
+var material = new THREE.MeshPhongMaterial({
+    color: 0xff0000,
+    specular: 0xffffff,
+    shininess: 100
+});
+
 function player_init(scene, position) {
     var LEGS_HEIGHT = 20;
     var BODY_HEIGHT = 15;
 
-    var material = new THREE.MeshPhongMaterial({
-        color: 0xff0000,
-        specular: 0xffffff,
-        shininess: 100
-    });
-
     var box = new Physijs.BoxMesh(
         new THREE.BoxGeometry(10, 10, BODY_HEIGHT),
-        material,
+        basic_material,
         1000
     );
 
@@ -33,7 +36,7 @@ function player_init(scene, position) {
     // ==== legs ====
     var right_leg = new Physijs.BoxMesh(
         new THREE.BoxGeometry(4, 4, LEGS_HEIGHT + 8),
-        material,
+        basic_material,
         1
     );
     right_leg.position.x = position.x;
@@ -43,7 +46,7 @@ function player_init(scene, position) {
     
     var left_leg = new Physijs.BoxMesh(
         new THREE.BoxGeometry(4, 4, LEGS_HEIGHT + 8),
-        material,
+        basic_material,
         1
     );
     left_leg.position.x = position.x;
@@ -80,6 +83,15 @@ function player_init(scene, position) {
     player.legs.right.setAngularUpperLimit({ x: 0, y: Math.PI, z: 0 });
     player.legs.left.setAngularLowerLimit({ x: 0, y: -Math.PI, z: 0 });
     player.legs.left.setAngularUpperLimit({ x: 0, y: Math.PI, z: 0 });
+
+    player.backlight = new THREE.PointLight( 0xffffff, 0.6, AREA_RADIUS);
+    // player.light = new THREE.PointLight( 0xffffff, 1.5, 2000 );
+    // light.color.setHSL( h, s, l );
+    // player.light.position.set( 0, 30, 40 );
+    // scene.add(player.light);
+
+    player.backlight.position.set( 0, 30, 40 );
+    scene.add(player.backlight);
 
     // box.rotation.x = Math.PI/8;
     // car_body.receiveShadow = car_body.castShadow = true;
@@ -178,6 +190,12 @@ function player_update(v) {
         player.legs.right.configureAngularMotor(1, -Math.PI/2, Math.PI/6, 100, 1000);
         legs_flag = 1;
     }
+
+    player.backlight.position.set(
+        player.position.x + 250*Math.cos(player.rotation.z),
+        player.position.y + 250*Math.sin(player.rotation.z),
+        player.position.z + 60
+    );
 
     // console.log("speed:", speed);
     
