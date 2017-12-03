@@ -105,7 +105,7 @@ function make_player(scene, position) {
     var material = new THREE.MeshPhongMaterial({
         color: 0xffffff,
         specular: 0xffffff,
-        shininess: 50
+        shininess: 100
     });
 
     box = new Physijs.BoxMesh(
@@ -321,6 +321,19 @@ function scene_init(scene) {
     custom_object.position.z = 30;
     custom_object.position.x = 20;
     // scene.add(custom_object);
+
+    var dirLight = new THREE.DirectionalLight( 0xffffff, 0.05 );
+    dirLight.position.set( 0, -1, 0 ).normalize();
+    scene.add(dirLight);
+
+    dirLight = new THREE.DirectionalLight( 0xffffff, 0.05 );
+    dirLight.position.set( 0, 1, 0 ).normalize();
+    scene.add( dirLight );
+
+    dirLight = new THREE.DirectionalLight( 0xffffff, 0.05 );
+    dirLight.position.set( 1, 1, 0 ).normalize();
+    scene.add( dirLight );
+    dirLight.color.setHSL( 0.1, 0.7, 0.5 );
 
     return camera;
 }
