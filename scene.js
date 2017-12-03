@@ -3,6 +3,9 @@ var custom_object;
 
 var player;
 
+var left_leg_constraint;
+var right_leg_constraint;
+
 function make_player(scene, position) {
     var LEGS_HEIGHT = 20;
     var BODY_HEIGHT = 15;
@@ -17,8 +20,8 @@ function make_player(scene, position) {
 
     var support_box = new Physijs.BoxMesh(
         new THREE.BoxGeometry(1, 1, LEGS_HEIGHT/2),
-        new THREE.MeshLambertMaterial({color: 0xffffff, transparent: false, opacity: 0.0}),
-        100
+        new THREE.MeshLambertMaterial({color: 0xffffff, transparent: true, opacity: 0.0}),
+        0
     );
 
     support_box.position.x = position.x;
@@ -32,48 +35,57 @@ function make_player(scene, position) {
     var right_leg = new Physijs.BoxMesh(
         new THREE.BoxGeometry(4, 4, LEGS_HEIGHT + 8),
         new THREE.MeshBasicMaterial({ color: 0xdeadbe, wireframe: true }),
-        200
+        1
     );
     right_leg.position.x = position.x;
     right_leg.position.y = position.y + 8;
-    right_leg.position.z = position.z - 0.5;// - 3 - LEGS_HEIGHT;
+    right_leg.position.z = position.z - 1;// - 3 - LEGS_HEIGHT;
     scene.add(right_leg);
     
     var left_leg = new Physijs.BoxMesh(
         new THREE.BoxGeometry(4, 4, LEGS_HEIGHT + 8),
         new THREE.MeshBasicMaterial({ color: 0xdeadbe, wireframe: true }),
-        200
+        1
     );
     left_leg.position.x = position.x;
     left_leg.position.y = position.y - 8;
-    left_leg.position.z = position.z - 0.5;//  - LEGS_HEIGHT;
+    left_leg.position.z = position.z - 1;//  - LEGS_HEIGHT;
     scene.add(left_leg);
     
 
     // ==== constraints ====
     
-    var right_leg_constraint = new Physijs.DOFConstraint(
+    right_leg_constraint = new Physijs.DOFConstraint(
         right_leg,
         support_box,
-        new THREE.Vector3(position.x, position.y, position.z + LEGS_HEIGHT), // point in the scene to apply the constraint
+        new THREE.Vector3(position.x, position.y + 8, position.z + LEGS_HEIGHT/2 + 4), // point in the scene to apply the constraint
         // new THREE.Vector3(0, 1, 0) // Axis along which the hinge lies - in this case it is the X axis
     );
+    
 
-    var left_leg_constraint = new Physijs.DOFConstraint(
+    left_leg_constraint = new Physijs.DOFConstraint(
         left_leg,
         support_box,
-        new THREE.Vector3(position.x, position.y, position.z + LEGS_HEIGHT), // point in the scene to apply the constraint
+        new THREE.Vector3(position.x, position.y - 8, position.z + LEGS_HEIGHT/2 + 4), // point in the scene to apply the constraint
         // new THREE.Vector3( 0, 1, 0 ) // Axis along which the hinge lies - in this case it is the X axis
     );
 
     scene.addConstraint(left_leg_constraint);
     scene.addConstraint(right_leg_constraint);
 
-    left_leg_constraint.setAngularLowerLimit({ x: 0, y: -Math.PI, z: 0 });
-    left_leg_constraint.setAngularUpperLimit({ x: 0, y: Math.PI, z: 0 });
-    right_leg_constraint.setAngularLowerLimit({ x: 0, y: -Math.PI, z: 0 });
-    right_leg_constraint.setAngularUpperLimit({ x: 0, y: Math.PI, z: 0 });
+    left_leg_constraint.enableAngularMotor(1);
+    right_leg_constraint.enableAngularMotor(1);
 
+    // left_leg_constraint.setAngularLowerLimit({ x: 0, y: -Math.PI*1/8, z: 0 });
+    // left_leg_constraint.setAngularUpperLimit({ x: 0, y: Math.PI*1/8, z: 0 });
+    //right_leg_constraint.setAngularLowerLimit({ x: 0, y: -Math.PI, z: 0 });
+    //right_leg_constraint.setAngularUpperLimit({ x: 0, y: Math.PI, z: 0 });
+
+    //right_leg_constraint.setAngularLowerLimit({ x: 0, y: 0, z: 0 });
+    //right_leg_constraint.setAngularUpperLimit({ x: 0, y: 0, z: 0 });
+
+    // left_leg_constraint.configureAngularMotor(1, -Math.PI*1/8, Math.PI*1/8, 10, 200);
+    // left_leg_constraint.enableAngularMotor(1);
     /*
     right_leg_constraint.setLimits(
         -Math.PI, // minimum angle of motion, in radians
@@ -180,7 +192,7 @@ function scene_init(scene) {
     );
     scene.add(ground);
 
-    player = make_player(scene, new THREE.Vector3( 0, 0, 30 ));
+    player = make_player(scene, new THREE.Vector3( 0, 0, 20 ));
     // player.position.z = 40;
 
     var building = new Physijs.BoxMesh(
@@ -199,13 +211,29 @@ function scene_init(scene) {
     // scene.add(custom_object);
 }
 
+var flag = 0;
+
 function scene_update(scene, t, delta) {
     // custom_object.rotation.x += 0.01;
+    
+
+    if(t*3 % 2 > 1 && flag == 1) {
+        console.log("set to odd");
+        left_leg_constraint.configureAngularMotor(1, -Math.PI/2, Math.PI/6, 100, 1000);
+        right_leg_constraint.configureAngularMotor(1, -Math.PI/6, Math.PI/2, -100, 1000);
+        flag = 0;
+    }
+
+    if(t*3 % 2 <= 1 && flag == 0) {
+        console.log("set to even");
+        left_leg_constraint.configureAngularMotor(1, -Math.PI/6, Math.PI/2, -100, 1000);
+        right_leg_constraint.configureAngularMotor(1, -Math.PI/2, Math.PI/6, 100, 1000);
+        flag = 1;
+    }
 
     
-    player.setAngularFactor(new THREE.Vector3( 0, 0, 0 ));
-    player.setAngularVelocity(new THREE.Vector3( 0, 0, 0 ));
+    // player.setAngularFactor(new THREE.Vector3( 0, 0, 0 ));
+    // player.setAngularVelocity(new THREE.Vector3( 0, 0, 0 ));
     //player.rotation.x = 0;
-    //player.rotation.y = 0;
-    
+    //player.rotation.y = 0;    
 }
