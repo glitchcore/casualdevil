@@ -42,6 +42,66 @@ function scene_init(scene) {
 
     player = player_init(scene, new THREE.Vector3( 0, 0, 20 ));
 
+    var enemy_geometry = new THREE.Geometry();
+
+    var ENEMY_SIZE = 8;
+
+    enemy_geometry.vertices.push(
+        new THREE.Vector3(-ENEMY_SIZE, -ENEMY_SIZE, -ENEMY_SIZE),
+        new THREE.Vector3(-ENEMY_SIZE,  ENEMY_SIZE, -ENEMY_SIZE),
+        new THREE.Vector3( ENEMY_SIZE,  ENEMY_SIZE, -ENEMY_SIZE),
+        new THREE.Vector3( ENEMY_SIZE, -ENEMY_SIZE, -ENEMY_SIZE),
+        new THREE.Vector3(-ENEMY_SIZE, -ENEMY_SIZE,  ENEMY_SIZE),
+        new THREE.Vector3( ENEMY_SIZE, -ENEMY_SIZE,  ENEMY_SIZE),
+        new THREE.Vector3(-ENEMY_SIZE,  ENEMY_SIZE,  ENEMY_SIZE),
+        new THREE.Vector3( ENEMY_SIZE,  ENEMY_SIZE,  ENEMY_SIZE),
+
+        new THREE.Vector3( 0, 0, -3 * ENEMY_SIZE),
+        new THREE.Vector3( 0, 0, 3 * ENEMY_SIZE),
+        new THREE.Vector3( 0, -3 * ENEMY_SIZE, 0),
+        new THREE.Vector3( 0, 3 * ENEMY_SIZE, 0)
+    );
+
+    enemy_geometry.faces.push(
+        new THREE.Face3(8, 0, 1),
+        new THREE.Face3(8, 1, 2),
+        new THREE.Face3(8, 2, 3),
+        new THREE.Face3(8, 3, 0),
+
+        new THREE.Face3(10, 3, 5),
+        new THREE.Face3(10, 4, 5),
+        new THREE.Face3(10, 4, 0),
+        new THREE.Face3(10, 0, 3),
+
+        new THREE.Face3(9, 6, 5),
+        new THREE.Face3(9, 4, 5),
+        new THREE.Face3(9, 4, 7),
+        new THREE.Face3(9, 7, 6),
+
+        new THREE.Face3(11, 7, 6),
+        new THREE.Face3(11, 6, 1),
+        new THREE.Face3(11, 1, 2),
+        new THREE.Face3(11, 2, 7),
+
+        new THREE.Face3(0, 1, 6),
+        new THREE.Face3(0, 6, 4),
+
+        new THREE.Face3(2, 3, 7),
+        new THREE.Face3(3, 7, 5),
+        // new THREE.Face3(11, 2, 7),
+    );
+
+    var enemy = new Physijs.ConcaveMesh(
+        enemy_geometry,
+        new THREE.MeshPhongMaterial({color: 0xff0000, specular: 0xffffff, shininess: 5}),
+        0
+    );
+    enemy.position.x = 0;
+    enemy.position.y = 0;
+    enemy.position.z = 60;
+
+    scene.add(enemy);
+
     /*
     var dirLight = new THREE.DirectionalLight( 0xffffff, 0.05 );
     dirLight.position.set( 0, -1, 0 ).normalize();
