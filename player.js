@@ -80,64 +80,12 @@ function player_init(scene, position) {
     player.legs.right.setAngularUpperLimit({ x: 0, y: Math.PI, z: 0 });
     player.legs.left.setAngularLowerLimit({ x: 0, y: -Math.PI, z: 0 });
     player.legs.left.setAngularUpperLimit({ x: 0, y: Math.PI, z: 0 });
-
-    //right_leg_constraint.setAngularLowerLimit({ x: 0, y: 0, z: 0 });
-    //right_leg_constraint.setAngularUpperLimit({ x: 0, y: 0, z: 0 });
-
-    // left_leg_constraint.configureAngularMotor(1, -Math.PI*1/8, Math.PI*1/8, 10, 200);
-    // left_leg_constraint.enableAngularMotor(1);
-    /*
-    right_leg_constraint.setLimits(
-        -Math.PI, // minimum angle of motion, in radians
-        Math.PI, // maximum angle of motion, in radians
-        100, // applied as a factor to constraint error
-        0, // controls bounce at limit (0.0 == no bounce)
-    );
-    
-    left_leg_constraint.setLimits(
-        -Math.PI, // minimum angle of motion, in radians
-        Math.PI, // maximum angle of motion, in radians
-        100, // applied as a factor to constraint error
-        1, // controls bounce at limit (0.0 == no bounce)
-    );
-    */
     
     // box.rotation.x = Math.PI/8;
     // car_body.receiveShadow = car_body.castShadow = true;
     // box.setAngularFactor(new THREE.Vector3( 0, 0, 0 ));
     // box.setCcdMotionThreshold(0.1);
     // box.setCcdSweptSphereRadius(1);
-
-    /*
-    var car_body = new Physijs.BoxMesh(
-        new THREE.BoxGeometry( 10, 5, 7 ),
-        car_material,
-        1000
-    );
-    car_body.position.y = 10;
-    // car_body.receiveShadow = car_body.castShadow = true;
-    scene.add(car_body);
-    
-    var car_wheel = new Physijs.CylinderMesh(
-        wheel_geometry,
-        wheel_material,
-        500
-    );
-    car_wheel.rotation.x = Math.PI / 2;
-    car_wheel.position.set( 3.5, 6.5, 5 );
-    // car.wheel_bl.receiveShadow = car.wheel_bl.castShadow = true;
-    scene.add( car.wheel_bl );
-    var car_wheel_constraint = new Physijs.DOFConstraint(
-        car_wheel, car_body, new THREE.Vector3( 10,10,10 )
-    );
-    scene.addConstraint(car_wheel_constraint);
-    car_wheel_constraint.setAngularLowerLimit({ x: 0, y: 0, z: 0 });
-    car_wheel_constraint.setAngularUpperLimit({ x: 0, y: 0, z: 0 });
-
-    car.wheel_bl_constraint.configureAngularMotor( 2, 1, 0, 20, 5000 );
-    //car.wheel_br_constraint.configureAngularMotor( 2, 1, 0, 20, 5000 );
-    car.wheel_bl_constraint.enableAngularMotor( 2 );
-    */
 
     return player;
 }

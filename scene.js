@@ -86,5 +86,5 @@ function scene_update(scene, t, delta) {
     );
     camera.rotation.x = -Math.PI/2;
     camera.rotation.y = -player.rotation.z + Math.PI/2;
-    camera.rotation.z = -Math.PI;   
+    camera.rotation.z = -Math.PI;
 }
